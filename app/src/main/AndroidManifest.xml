@@ -23,6 +23,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Activity2"
+            android:exported="false"
+            android:label="@string/title_activity_2"
+            android:theme="@style/Theme.TaskTracker"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>
