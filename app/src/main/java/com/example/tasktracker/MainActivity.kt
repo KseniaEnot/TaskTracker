@@ -1,47 +1,132 @@
 package com.example.tasktracker
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.tasktracker.ui.theme.TaskTrackerTheme
+import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            TaskTrackerTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+            Scaffold(
+                content = {padding: PaddingValues ->
+                    TextInput(modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(padding))
                 }
+            )
+        }
+    }
+
+    @Composable
+    fun TextInput(modifier: Modifier = Modifier) {
+        var phoneNumber by remember { mutableStateOf("") }
+        var isError by remember { mutableStateOf(false) }
+
+        Column(
+            modifier = modifier,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ){
+            TextField(
+                value = phoneNumber,
+                onValueChange = { phoneNumber = it },
+                label = { Text("Номер друга") },
+                isError = isError,
+                supportingText = {
+                    if (isError) {
+                        Text(
+                            text = "Введите корректный номер телефона"
+                        )
+                    }
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+            )
+
+            Button(
+                onClick = {
+                    // явный Intent
+                    if (isValidPhone(phoneNumber)) {
+                        val intent = Intent(this@MainActivity, Activity2::class.java).apply{
+                            putExtras(
+                                    Bundle().apply{
+                                        putString("EXTRA_KEY_PHONE_NAMPER", phoneNumber)}
+                            )
+                        }
+                        startActivity(intent)
+                    }else{
+                        isError = true
+                    }
+                }
+            )
+            {
+                Text(text = "Открыть вторую Activity")
+            }
+
+            Button(
+                onClick = {
+                    if (isValidPhone(phoneNumber)) {
+                        val intent = Intent(Intent.ACTION_DIAL).apply {
+                            data = "tel:$phoneNumber".toUri()
+                        }
+                        startActivity(intent)
+                    }else{
+                        isError = true
+                    }
+                }
+            )
+            {
+                Text(text = "Позвонить другу")
+            }
+
+            Button(
+                onClick = {
+                    if (isValidPhone(phoneNumber)) {
+                        val intent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, phoneNumber)
+                        }
+                        startActivity(intent)
+                    }else{
+                        isError = true
+                    }
+                }
+            )
+            {
+                Text(text = "Поделиться через…")
             }
         }
     }
-}
+    fun isValidPhone(phoneNumber: String): Boolean{
+        val regex = Regex("^\\+?[0-9]{10,15}$")
+        val cleaned = phoneNumber.replace(Regex("[\\s\\-()]"), "")
+        return regex.matches(cleaned)
+    }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TaskTrackerTheme {
-        Greeting("Android")
+    @Composable
+    @Preview(showBackground = true, showSystemUi = true)
+    private fun Prev(){
+        TextInput(Modifier
+            .fillMaxSize()
+            .padding(PaddingValues()))
     }
 }
+
