@@ -29,8 +29,8 @@ class MainActivity : ComponentActivity() {
             Scaffold(
                 content = {padding: PaddingValues ->
                     TextInput(modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(padding))
+                        .fillMaxSize()
+                        .padding(padding))
                 }
             )
         }
@@ -67,8 +67,8 @@ class MainActivity : ComponentActivity() {
                     if (isValidPhone(phoneNumber)) {
                         val intent = Intent(this@MainActivity, Activity2::class.java).apply{
                             putExtras(
-                                    Bundle().apply{
-                                        putString("EXTRA_KEY_PHONE_NAMPER", phoneNumber)}
+                                Bundle().apply{
+                                    putString("EXTRA_KEY_PHONE_NAMPER", phoneNumber)}
                             )
                         }
                         startActivity(intent)
@@ -129,4 +129,3 @@ class MainActivity : ComponentActivity() {
             .padding(PaddingValues()))
     }
 }
-
