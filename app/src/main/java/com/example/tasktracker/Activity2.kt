@@ -29,7 +29,6 @@ class Activity2 : ComponentActivity() {
                             .fillMaxSize()
                             .padding(innerPadding),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(50.dp)
                     ) {
                         val text = intent.getStringExtra("EXTRA_KEY_PHONE_NAMPER").orEmpty()
                         Text(text = text)
